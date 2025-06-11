@@ -1,25 +1,29 @@
 let modInfo = {
-	name: "The ??? Tree",
-	author: "nobody",
-	pointsName: "points",
-	modFiles: ["layers.js", "tree.js"],
+	name: "The Factorio Tree",
+	id: "thefactoriotreeMM07",
+	author: "MundM2007",
+	pointsName: "seconds",
+	modFiles: ["smelters.js", "research.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "Red Science",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v0.1: Red Science</h3><br>
+		- Added 2 Layers.<br>
+		- Added 4 resources.<br>
+		- Added 10 upgrades.<br>
+		- Added 1 buyable.<br>
+		- Current Endgame: 125832 seconds.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -36,13 +40,61 @@ function canGenPoints(){
 	return true
 }
 
+
+function getPointGenAdd() {
+	let add = new Decimal(1.7)
+
+	if(hasUpgrade("s",12)) add = add.add(1.3)
+	if(hasUpgrade("s",13)) add = add.add(player.s.points.add(1).log(2).pow(4/3))
+	
+	return add
+}
+
+
+function getPointGenExp() {
+	let exp = new Decimal(2)
+
+	exp = exp.add(buyableEffect("r", 11))
+	if(hasUpgrade("s",25)) exp = exp.add(0.135)
+	
+	return exp
+}
+
+
+function getPointGenRoot() {
+	let root = new Decimal(1/2)
+	return root
+}
+
+
+function getPointGenLog() {
+	let log = new Decimal(10)
+	return log
+}
+
+
+function getPointGenMul() {
+	let mul = new Decimal(1)
+
+	if(hasUpgrade("s",11)) mul = mul.mul(2)
+	if(hasMilestone("s",1)) mul = mul.mul(1.04)
+	if(hasUpgrade("s",21)) mul = mul.mul(player.s.points.add(1).log(2).pow(4/3).pow(1/2))
+	if(hasUpgrade("s",24)) mul = mul.mul(player.points.add(1).pow(0.1))
+	
+	return mul
+}
+
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
+	if(!canGenPoints()) return new Decimal(0)
 
-	let gain = new Decimal(1)
-	return gain
+	return player.points.add(1)
+		.log(getPointGenLog())
+		.pow(getPointGenRoot())
+		.add(getPointGenAdd())
+		.pow(getPointGenExp())
+		.mul(getPointGenMul())
+		.sub(player.points)
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -51,13 +103,25 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	function(){
+		return "Your seconds amount is increasing to <br>"
+		+format(getPointGenMul())
+		+"*((log"
+		+format(getPointGenLog())
+		+"([Seconds]+1))^("
+		+format(getPointGenRoot())
+		+")+"
+		+format(getPointGenAdd())
+		+")^"
+		+format(getPointGenExp())
+		+"<br>every second."
+	}
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(new Decimal("125832"))
 }
-
 
 
 // Less important things beyond this point!

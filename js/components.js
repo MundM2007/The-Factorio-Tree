@@ -245,11 +245,11 @@ function loadVue() {
 		props: ['layer'],
 		template: `
 		<div style="margin-top: -13px">
-			<span v-if="tmp[layer].baseAmount"><br>You have {{formatWhole(tmp[layer].baseAmount)}} {{tmp[layer].baseResource}}</span>
+			<span v-if="tmp[layer].baseAmount"><br>You have spent {{formatWhole(tmp[layer].baseAmount)}} {{tmp[layer].baseResource}} in the game</span>
 			<span v-if="tmp[layer].passiveGeneration"><br>You are gaining {{format(tmp[layer].resetGain.times(tmp[layer].passiveGeneration))}} {{tmp[layer].resource}} per second</span>
 			<br><br>
-			<span v-if="tmp[layer].showBest">Your best {{tmp[layer].resource}} is {{formatWhole(player[layer].best)}}<br></span>
-			<span v-if="tmp[layer].showTotal">You have made a total of {{formatWhole(player[layer].total)}} {{tmp[layer].resource}}<br></span>
+			<span v-if="tmp[layer].showBest">Your best {{tmp[layer].resource}} spent in the game is {{formatWhole(player[layer].best)}}<br></span>
+			<span v-if="tmp[layer].showTotal">You have spent a total of {{formatWhole(player[layer].total)}} {{tmp[layer].resource}} in the game<br></span>
 		</div>
 		`
 	})

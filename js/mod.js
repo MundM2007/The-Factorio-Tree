@@ -13,17 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
+	num: "0.1.0",
 	name: "Red Science",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.1: Red Science</h3><br>
+	<h3>v0.1.0: Red Science</h3><br>
 		- Added 2 Layers.<br>
 		- Added 4 resources.<br>
 		- Added 10 upgrades.<br>
 		- Added 1 buyable.<br>
-		- Current Endgame: 125832 seconds.`
+		- Current Endgame: 125,832 seconds.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 

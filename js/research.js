@@ -10,7 +10,7 @@ addLayer("r", {
     type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     row: "side", // Row the layer is in on the tree (0 is the first row)
     tabFormat: [
-        ["display-text", () => `Here you can research different flasks. They are never reset unless otherwise stated.`],
+        ["display-text", () => `Here you can research different sciences.<br> They are never reset unless otherwise stated.<br> To see the cost and effect formulas hover over the buyables.`],
         "blank",
         "buyables"
     ],
@@ -20,7 +20,7 @@ addLayer("r", {
             title: "Automation Science",
             unlocked() {return hasUpgrade("s",15)},
             tooltip() {
-                return "Formula:<br>0.5*[Amount]"
+                return "Cost Formula:<br>500* 5^x * (x+1)^(1.5^x)<br>Effect Formula:<br>0.5*[Amount]"
             },
             style() {
                 const style = {"background-color": null}

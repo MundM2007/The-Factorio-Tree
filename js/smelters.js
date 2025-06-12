@@ -1,15 +1,21 @@
+function getIronExp(){
+    exp = new Decimal(2)
+    if (hasUpgrade("s", 23)) exp = exp.add(1)
+    return exp
+}
 function getIronGen(){
-    power = new Decimal(2)
-    if (hasUpgrade("s", 23)) power = power.add(1)
-    let gain = player.s.points.pow(power)
+    let gain = player.s.points.pow(getIronExp())
     if (hasUpgrade("s", 15)) gain = gain.mul(2)
     if (hasUpgrade("s", 22)) gain = gain.mul(player.s.copper_plates.add(2).log2())
     return gain
 }
+function getCopperExp(){
+    exp = new Decimal(1)
+    if (hasUpgrade("s", 23)) exp = exp.add(1)
+    return exp
+}
 function getCopperGen(){
-    power = new Decimal(1)
-    if (hasUpgrade("s", 23)) power = power.add(1)
-    let gain = player.s.points.pow(power)
+    let gain = player.s.points.pow(getCopperExp())
     if (hasUpgrade("s", 15)) gain = gain.mul(2)
     if (hasUpgrade("s", 22)) gain = gain.mul(player.s.iron_plates.add(2).log2())
     return gain
@@ -59,9 +65,9 @@ addLayer("s", {
             () => {
                 if (!hasMilestone("s", 0)) return ""
                 return `You have <h2 style="color: #707070; text-shadow: 0px 0px 10px #707070">${format(player.s.iron_plates)}</h2> iron plates<br>
-                Your smelters are generating ${format(getIronGen())} iron plates per second (Formula: [smelters]^2)<br>
+                Your smelters are generating ${format(getIronGen())} iron plates per second (Formula: [smelters]^${format(getIronExp())})<br>
                 You have <h2 style="color: #ffa982; text-shadow: 0px 0px 10px #ffa982">${format(player.s.copper_plates)}</h2> copper plates<br>
-                Your smelters are generating ${format(getCopperGen())} copper plates per second (Formula: [smelters])`
+                Your smelters are generating ${format(getCopperGen())} copper plates per second (Formula: [smelters]^${format(getCopperExp())})`
             }
         ],
         "blank",

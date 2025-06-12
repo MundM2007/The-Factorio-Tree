@@ -112,7 +112,7 @@ addLayer("s", {
         },
         13: {
             title: "More Time II",
-            description: "Allocate even more time to the game. Increase AiF based on seconds.",
+            description: "Allocate even more time to the game. Increase AiF based on smelters.",
             cost: new Decimal(150),
             unlocked() {return hasUpgrade("s",12)},
             tooltip() {

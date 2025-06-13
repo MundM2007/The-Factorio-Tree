@@ -23,9 +23,9 @@ function getCopperGen(){
 
 
 addLayer("s", {
-    name: "smelter", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    name: "smelter",
+    symbol: "S",
+    position: 0,
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
@@ -33,26 +33,28 @@ addLayer("s", {
         copper_plates: new Decimal(0),
     }},
     color: "#EC1C24",
-    requires: new Decimal(7), // Can be a function that takes requirement increases into account
-    resource: "smelters", // Name of prestige currency
-    baseResource: "seconds", // Name of resource prestige is based on
-    baseAmount() {return player.points}, // Get the current amount of baseResource
-    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: function sLayerScalingExponent(){
-        exponent = new Decimal(1.24)
+    requires: new Decimal(7),
+    resource: "smelters",
+    baseResource: "seconds",
+    baseAmount() {return player.points},
+    type: "static",
+    base: new Decimal(2),
+    exponent: function sLayerScalingExp(){
+        exp = new Decimal(1.24)
         
-        if(hasUpgrade("s", 14)) exponent = exponent.sub(0.24)
+        if(hasUpgrade("s", 14)) exp = exp.sub(0.24)
 
-        return exponent
-    }, // Prestige currency exponent
-    gainMult() { // Calculate the multiplier for main currency from bonuses
+        return exp
+    },
+    gainMult() {
         mult = new Decimal(1)
         return mult
     },
-    gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+    gainExp() {
+        exp = new Decimal(1)
+        return exp
     },
-    row: 0, // Row the layer is in on the tree (0 is the first row)
+    row: 0,
     hotkeys: [
         {key: "s", description: "S: Reset for smelters", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],

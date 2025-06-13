@@ -20,7 +20,7 @@ addLayer("r", {
             title: "Automation Science",
             unlocked() {return hasUpgrade("s",15)},
             tooltip() {
-                return "Cost Formula:<br>500* 5^x * (x+1)^(1.5^x)<br>Effect Formula:<br>0.5*[Amount]"
+                return "Cost Formula:<br>500 * 5^x * x^(1.5^x)<br>Effect Formula:<br>0.5*[Amount]"
             },
             style() {
                 const style = {"background-color": null}
@@ -28,7 +28,7 @@ addLayer("r", {
                 return style
             },
             cost(x){
-                return (new Decimal(500)).mul((new Decimal(5)).pow(x)).mul(x.add(1).pow((new Decimal(1.5)).pow(x)))
+                return (new Decimal(500)).mul((new Decimal(5)).pow(x)).mul(Decimal.max(x.pow((new Decimal(1.5)).pow(x)), 1))
             },
             canAfford() {return player.s.iron_plates.gte(this.cost()) && player.s.copper_plates.gte(this.cost())},
             display() {return `
@@ -43,7 +43,7 @@ addLayer("r", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect(x) {
-                add = new Decimal(0.5) * x
+                let add = new Decimal(0.5) * x
                 return add
             }
         }

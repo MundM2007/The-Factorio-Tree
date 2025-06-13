@@ -3,7 +3,7 @@ let modInfo = {
 	id: "thefactoriotreeMM07",
 	author: "MundM2007",
 	pointsName: "seconds",
-	modFiles: ["smelters.js", "research.js", "tree.js"],
+	modFiles: ["smelters.js", "research.js", "tree.js", "mod_utils.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -18,10 +18,20 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.1.1</h3><br>
+		- Improved formula display.<br>
+		- More Time II now boosts point gain and More Time II AiF.<br>
+		- changes More Time II formula.<br>
+		- increased Finally a new layer! boost.<br>
+		- changed order of upgrades 21 and 22 and of upgrades 23 and 24.<br>
+		- added 1 milestone.<br>
+		- changes the cost of last 4 upgrades and changed description of last upgrade.<br>
+		- Current Endgame: 490,607 seconds<br>
 	<h3>v0.1.0: Red Science</h3><br>
 		- Added 2 Layers.<br>
 		- Added 4 resources.<br>
 		- Added 10 upgrades.<br>
+		- Added 2 milestones.<br>
 		- Added 1 buyable.<br>
 		- Current Endgame: 125,832 seconds.`
 
@@ -45,7 +55,7 @@ function getPointGenAdd() {
 	let add = new Decimal(1.7)
 
 	if(hasUpgrade("s",12)) add = add.add(1.3)
-	if(hasUpgrade("s",13)) add = add.add(player.s.points.add(1).log(2).pow(4/3))
+	if(hasUpgrade("s",22)) add = add.add(upgradeEffect("s", 22))
 	
 	return add
 }
@@ -55,7 +65,7 @@ function getPointGenExp() {
 	let exp = new Decimal(2)
 
 	exp = exp.add(buyableEffect("r", 11))
-	if(hasUpgrade("s",25)) exp = exp.add(0.135)
+	if(hasUpgrade("s",25)) exp = exp.add(0.182)
 	
 	return exp
 }
@@ -77,9 +87,9 @@ function getPointGenMul() {
 	let mul = new Decimal(1)
 
 	if(hasUpgrade("s",11)) mul = mul.mul(2)
-	if(hasMilestone("s",1)) mul = mul.mul(1.04)
-	if(hasUpgrade("s",21)) mul = mul.mul(player.s.points.add(1).log(2).pow(4/3).pow(1/2))
-	if(hasUpgrade("s",24)) mul = mul.mul(player.points.add(1).pow(0.1))
+	if(hasMilestone("s",1)) mul = mul.mul(1.165)
+	if(hasUpgrade("s",13)) mul = mul.mul(upgradeEffect("s", 13))
+	if(hasUpgrade("s",23)) mul = mul.mul(upgradeEffect("s", 23))
 	
 	return mul
 }
@@ -104,23 +114,57 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function(){
-		return "Your seconds amount is increasing to <br>"
-		+format(getPointGenMul())
-		+"*((log"
-		+format(getPointGenLog())
-		+"([Seconds]+1))^("
-		+format(getPointGenRoot())
-		+")+"
-		+format(getPointGenAdd())
-		+")^"
-		+format(getPointGenExp())
-		+"<br>every second."
+		let object = {
+			op: "mul",
+			args: [
+				{
+					op: "pow",
+					args: [
+						{
+							op: "add",
+							args: [
+								{
+									op: "pow",
+									args: [
+										{
+											op: "log",
+											args: [
+												{
+													variable: "seconds+1"
+												},
+												{
+													value: getPointGenLog()
+												}
+											]
+										},
+										{
+											value: getPointGenRoot()
+										}
+									]
+								},
+								{
+									value: getPointGenAdd()
+								}
+							]
+						},
+						{
+							value: getPointGenExp()
+						}
+					]
+				},
+				{
+					value: getPointGenMul()
+				}
+			]
+		}
+
+		return "Your seconds amount is increasing to <br>" + formatFormula(object) + "<br>every second."
 	}
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("125832"))
+	return player.points.gte(new Decimal("490607"))
 }
 
 

@@ -13,19 +13,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1",
+	num: "0.1.2",
 	name: "",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.1.2</h3><br>
+		- changed second formula display.<br>
 	<h3>v0.1.1</h3><br>
 		- Improved formula display.<br>
 		- More Time II now boosts point gain and More Time II AiF.<br>
-		- changes More Time II formula.<br>
+		- changed More Time II formula.<br>
 		- increased Finally a new layer! boost.<br>
 		- changed order of upgrades 21 and 22 and of upgrades 23 and 24.<br>
 		- added 1 milestone.<br>
-		- changes the cost of last 4 upgrades and changed description of last upgrade.<br>
+		- changed the cost of the last 4 upgrades and changed description of the last upgrade.<br>
 		- Current Endgame: 490,607 seconds<br>
 	<h3>v0.1.0: Red Science</h3><br>
 		- Added 2 Layers.<br>
@@ -114,51 +116,12 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function(){
-		let object = {
-			op: "mul",
-			args: [
-				{
-					op: "pow",
-					args: [
-						{
-							op: "add",
-							args: [
-								{
-									op: "pow",
-									args: [
-										{
-											op: "log",
-											args: [
-												{
-													variable: "seconds+1"
-												},
-												{
-													value: getPointGenLog()
-												}
-											]
-										},
-										{
-											value: getPointGenRoot()
-										}
-									]
-								},
-								{
-									value: getPointGenAdd()
-								}
-							]
-						},
-						{
-							value: getPointGenExp()
-						}
-					]
-				},
-				{
-					value: getPointGenMul()
-				}
-			]
-		}
-
-		return "Your seconds amount is increasing to <br>" + formatFormula(object) + "<br>every second."
+		return `A = ${format(getPointGenLog())};
+				B = ${format(getPointGenRoot())};
+				C = ${format(getPointGenAdd())};
+				D = ${format(getPointGenExp())};
+				E = ${format(getPointGenMul())}<br>
+			Because of these values your seconds amount is increasing to<br>(((logA([seconds+1])^B)+C)^D)*E every second.`
 	}
 ]
 

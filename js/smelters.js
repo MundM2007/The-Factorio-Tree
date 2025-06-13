@@ -56,6 +56,9 @@ addLayer("s", {
         player.s.iron_plates = player.s.iron_plates.add(tmp.s.iron_plates.getGain.mul(diff))
         player.s.copper_plates = player.s.copper_plates.add(tmp.s.copper_plates.getGain.mul(diff))
     },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, [])
+    },
     iron_plates: {
         getExp(){
             let exp = new Decimal(2)
@@ -115,7 +118,7 @@ addLayer("s", {
     upgrades: {
         11: {
             title: "More Time",
-            description: "Allocate more time to the game. Multiply seconds gain by 2.",
+            description: "Allocate more time to the game. Multiply seconds gain (E) by 2.",
             cost: new Decimal(10),
             unlocked() {return hasMilestone("s", 0)},
             currencyDisplayName: "iron plates",
@@ -124,7 +127,7 @@ addLayer("s", {
         },
         12: {
             title: "Electricity",
-            description: "Build a Steam Engine. Increase the addition in the seconds formula (=AiF) by 1.3.",
+            description: "Build a Steam Engine. Increase the addition in the seconds formula (C) by 1.3.",
             cost: new Decimal(100),
             unlocked() {return hasUpgrade("s",11)},
             currencyDisplayName: "iron plates",
@@ -133,11 +136,11 @@ addLayer("s", {
         },
         13: {
             title: "More Time II",
-            description: "Allocate even more time to the game. Increase seconds gain based on smelters.",
+            description: "Allocate even more time to the game. Multiply seconds gain (E) based on smelters.",
             cost: new Decimal(150),
             unlocked() {return hasUpgrade("s",12)},
             tooltip() {
-                return "Formula: log2([smelters])<br>^(3/2)+0.025"
+                return "Formula: log2([smelters])<br>^(1.5)+0.025"
             },
             effect() {
                 return Decimal.max(player.s.points.log(2).pow(3/2).add(0.025), 1)
@@ -190,7 +193,7 @@ addLayer("s", {
         },
         22: {
             title: "More Time III",
-            description: "More Time II now also increases AiF at a reduced rate",
+            description: "More Time II now also increases C at a reduced rate",
             cost: new Decimal(60000),
             unlocked() {return hasUpgrade("s",21)},
             tooltip() {
@@ -208,7 +211,7 @@ addLayer("s", {
         },
         23: {
             title: "Addicting!",
-            description: "Seconds boosts its own gain",
+            description: "Seconds boosts its own gain (E)",
             cost: new Decimal(150000),
             unlocked() {return hasUpgrade("s",22)},
             tooltip() {
@@ -235,7 +238,7 @@ addLayer("s", {
         },
         25: {
             title: "The last upgrade before a new layer",
-            description: "Increase EiF by 0.182.",
+            description: "Increase D by 0.182.",
             cost: new Decimal(5000000),
             unlocked() {return hasUpgrade("s",24)},
             currencyDisplayName: "iron plates",

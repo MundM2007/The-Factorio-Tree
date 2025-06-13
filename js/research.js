@@ -3,7 +3,7 @@ addLayer("r", {
     symbol: "🧪", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: true
+        unlocked: false
     }},
     tooltip: "Research",
     color: "#333333",
@@ -14,7 +14,13 @@ addLayer("r", {
         "blank",
         "buyables"
     ],
-    layerShown(){return hasUpgrade("s",15)},
+    layerShown(){
+        if(player.r.unlocked) return true
+        return hasUpgrade("s", 15)
+    },
+    doReset(resettingLayer) {
+        return
+    },
     buyables: {
         11: {
             title: "Automation Science",
@@ -35,7 +41,7 @@ addLayer("r", {
                 Amount: ${formatWhole(getBuyableAmount(this.layer, this.id))}, Cost: 
                 ${format(player.s.iron_plates)}/${format(this.cost())} iron plates
                 ${format(player.s.copper_plates)}/${format(this.cost())} copper plates<br>
-                Effect: +${format(this.effect())} Exponent in the seconds formula (EiF).`
+                Effect: +${format(this.effect())} Exponent in the seconds formula (E).`
             },
             buy() {
                 player.s.iron_plates = player.s.iron_plates.sub(this.cost())

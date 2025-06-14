@@ -3,7 +3,7 @@ let modInfo = {
 	id: "thefactoriotreeMM07",
 	author: "MundM2007",
 	pointsName: "seconds",
-	modFiles: ["smelters.js", "research.js", "tree.js", "mod_utils.js"],
+	modFiles: ["smelters.js", "assemblers.js", "research.js", "info.js", "tree.js", "mod_utils.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,11 +13,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.2",
-	name: "",
+	num: "0.2.0",
+	name: "Assemblers!",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.2.0: Assemblers!</h3><br>
+		- Added 1 Layer + 1 Information Layer.<br>
+		- Added 3 Resources.<br>
+		- Added 10 Upgrades.<br>
+		- Added 5 Milestones.<br>
+		- Added 3 Challenges.<br>
+		- Added 3 Infoboxes.<br>
+		- Added automation<br>
+		- Current Endgame: 1.14e17 seconds<br>
 	<h3>v0.1.2</h3><br>
 		- changed second formula display.<br>
 	<h3>v0.1.1</h3><br>
@@ -54,20 +63,30 @@ function canGenPoints(){
 
 
 function getPointGenAdd() {
+	if(inChallenge("a", 13)) return tmp.a.challenges[13].challengeNerf
 	let add = new Decimal(1.7)
 
 	if(hasUpgrade("s",12)) add = add.add(1.3)
 	if(hasUpgrade("s",22)) add = add.add(upgradeEffect("s", 22))
+	if(hasUpgrade("a",11)) add = add.add(1.3)
+	if(hasUpgrade("a",15)) add = add.add(0.35)
 	
 	return add
 }
 
 
 function getPointGenExp() {
+	if(inChallenge("a", 12)) return tmp.a.challenges[12].challengeNerf
 	let exp = new Decimal(2)
 
+	//add
 	exp = exp.add(buyableEffect("r", 11))
 	if(hasUpgrade("s",25)) exp = exp.add(0.182)
+	if(hasUpgrade("s",32)) exp = exp.add(upgradeEffect("s", 32))
+	if(hasUpgrade("a",15)) exp = exp.add(0.35)
+	
+	//mul
+	if(hasUpgrade("s",31)) exp = exp.mul(1.25)
 	
 	return exp
 }
@@ -75,6 +94,9 @@ function getPointGenExp() {
 
 function getPointGenRoot() {
 	let root = new Decimal(1/2)
+
+	if(hasUpgrade("s",34)) root = root.add(0.22)
+
 	return root
 }
 
@@ -86,12 +108,15 @@ function getPointGenLog() {
 
 
 function getPointGenMul() {
+	if(inChallenge("a", 11)) return tmp.a.challenges[11].challengeNerf
 	let mul = new Decimal(1)
 
 	if(hasUpgrade("s",11)) mul = mul.mul(2)
 	if(hasMilestone("s",1)) mul = mul.mul(1.165)
 	if(hasUpgrade("s",13)) mul = mul.mul(upgradeEffect("s", 13))
 	if(hasUpgrade("s",23)) mul = mul.mul(upgradeEffect("s", 23))
+	if(hasMilestone("s",4)) mul = mul.mul(1.456)
+	if(hasUpgrade("a",15)) mul = mul.mul(5)
 	
 	return mul
 }
@@ -127,7 +152,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("490607"))
+	return player.points.gte(new Decimal("1.14e17"))
 }
 
 

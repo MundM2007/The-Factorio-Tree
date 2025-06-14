@@ -26,6 +26,14 @@ addLayer("s", {
         let mult = new Decimal(1)
         return mult
     },
+    directMult(){
+        let mult = new Decimal(1)
+
+        if(hasMilestone("s", 3)) mult = mult.mul(1.5)
+        if(hasUpgrade("s", 33)) mult = mult.mul(upgradeEffect("s", 33))
+
+        return mult
+    },
     gainExp() {
         let exp = new Decimal(1)
         return exp
@@ -59,16 +67,38 @@ addLayer("s", {
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, [])
     },
+    automate(){
+        let autoUpgrade = []
+        if(hasMilestone("a", 1)){
+            autoUpgrade.push(11, 12, 13, 14, 15, 21, 22, 23, 24, 25)
+        }
+        if(hasMilestone("a", 2)){
+            autoUpgrade.push(31, 32, 33, 34, 35)
+        }
+
+        for (let i = 0; i < autoUpgrade.length; i++) {
+            buyUpgrade("s", autoUpgrade[i])
+        }
+    },
+    autoPrestige() {
+        return hasMilestone("a", 2)
+    },
     iron_plates: {
         getExp(){
             let exp = new Decimal(2)
             if (hasUpgrade("s", 24)) exp = exp.add(1)
+
+            if (hasUpgrade("a", 14)) exp = exp.mul(1.5)
             return exp
         },
         getMul(){
             let mul = new Decimal(1)
             if (hasUpgrade("s", 15)) mul = mul.mul(2)
             if (hasUpgrade("s", 21)) mul = mul.mul(tmp.s.upgrades[21].effectToIron)
+            if (hasUpgrade("a", 12)) mul = mul.mul(100)
+            mul = mul.mul(challengeEffect("a", 11))
+            if (hasUpgrade("s", 35)) mul = mul.mul(5)
+            if (hasMilestone("a", 2)) mul = mul.mul(50)
             return mul
         },
         getGain(){
@@ -81,6 +111,8 @@ addLayer("s", {
         getExp(){
             let exp = new Decimal(1)
             if (hasUpgrade("s", 24)) exp = exp.add(1)
+
+            if (hasUpgrade("a", 14)) exp = exp.mul(1.5)
             return exp
         },
         getMul(){
@@ -88,6 +120,10 @@ addLayer("s", {
             if (hasUpgrade("s", 15)) mul = mul.mul(2)
             if (hasUpgrade("s", 21)) mul = mul.mul(tmp.s.upgrades[21].effectToCopper)
             if (hasMilestone("s", 2)) mul = mul.mul(3)
+            if (hasUpgrade("a", 12)) mul = mul.mul(100)
+            mul = mul.mul(challengeEffect("a", 11))
+            if (hasUpgrade("s", 35)) mul = mul.mul(5)
+            if (hasMilestone("a", 2)) mul = mul.mul(50)
             return mul
         },
         getGain(){
@@ -113,6 +149,18 @@ addLayer("s", {
             effectDescription: "Unlock the next reset layer and multiply copper plates production by 3.",
             unlocked() {return hasMilestone("s", 1)},
             done() {return player.s.points.gte(15)},
+        },
+        3: {
+            requirementDescription: "18 smelters",
+            effectDescription: "Smelters gain is multiplied by 1.5.",
+            unlocked() {return hasMilestone("s", 2) && hasUpgrade("a", 11)},
+            done() {return player.s.points.gte(18)},
+        },
+        4: {
+            requirementDescription: "27 smelters",
+            effectDescription: "Seconds gain is multiplied by 1.456.",
+            unlocked() {return hasMilestone("s", 3)},
+            done() {return player.s.points.gte(27)},
         }
     },
     upgrades: {
@@ -241,6 +289,69 @@ addLayer("s", {
             description: "Increase D by 0.182.",
             cost: new Decimal(5000000),
             unlocked() {return hasUpgrade("s",24)},
+            currencyDisplayName: "iron plates",
+            currencyInternalName: "iron_plates",
+            currencyLocation: function() {return player[this.layer]},
+        },
+        31: {
+            title: "What? How Op!",
+            description: "After all additions to D, multiply it by 1.25.",
+            cost: new Decimal("1e14"),
+            unlocked() {return hasMilestone("a",1)},
+            currencyDisplayName: "iron plates",
+            currencyInternalName: "iron_plates",
+            currencyLocation: function() {return player[this.layer]},
+        },
+        32: {
+            title: "More Time IV",
+            description: "More Time II now also increases D at a heavily reduced rate.",
+            cost: new Decimal("2e16"),
+            unlocked() {return hasUpgrade("s",31)},
+            tooltip() {
+                return "Formula:<br>[More Time II Effect]^(0.1)"
+            },
+            effect() {
+                return tmp.s.upgrades[13].effect.pow(0.1)
+            },
+            effectDisplay() {
+                return "+" + format(this.effect())
+            },
+            currencyDisplayName: "iron plates",
+            currencyInternalName: "iron_plates",
+            currencyLocation: function() {return player[this.layer]},
+        },
+        33: {
+            title: "Pure Magic",
+            description: "Smelters now boost it's own gain.",
+            cost: new Decimal("5e16"),
+            unlocked() {return hasUpgrade("s",32)},
+            tooltip() {
+                return "Formula:<br>log4([Smelters])<br>^(0.5)"
+            },
+            effect() {
+                return Decimal.max(player.s.points.log(4).pow(0.5), 1)
+            },
+            effectDisplay() {
+                return "x" + format(this.effect())
+            },
+            currencyDisplayName: "iron plates",
+            currencyInternalName: "iron_plates",
+            currencyLocation: function() {return player[this.layer]},
+        },
+        34: {
+            title: "B for Big Boost",
+            description: "The B value in the seconds formula is increased by 0.22.",
+            cost: new Decimal("1e18"),
+            unlocked() {return hasUpgrade("s",33)},
+            currencyDisplayName: "iron plates",
+            currencyInternalName: "iron_plates",
+            currencyLocation: function() {return player[this.layer]},
+        },
+        35: {
+            title: "Not that big of a boost",
+            description: "Multiply plates gain by 5.",
+            cost: new Decimal("1.5e18"),
+            unlocked() {return hasUpgrade("s",34)},
             currencyDisplayName: "iron plates",
             currencyInternalName: "iron_plates",
             currencyLocation: function() {return player[this.layer]},

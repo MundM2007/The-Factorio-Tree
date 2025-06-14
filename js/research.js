@@ -1,14 +1,14 @@
 addLayer("r", {
-    name: "research", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "🧪", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    name: "research", 
+    symbol: "🧪",
+    position: 0,
     startData() { return {
-        unlocked: false
+        unlocked: false,
     }},
     tooltip: "Research",
     color: "#333333",
-    type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    row: "side", // Row the layer is in on the tree (0 is the first row)
+    type: "none",
+    row: "side",
     tabFormat: [
         ["display-text", () => `Here you can research different sciences.<br> They are never reset unless otherwise stated.<br> To see the cost and effect formulas hover over the buyables.`],
         "blank",
@@ -16,17 +16,27 @@ addLayer("r", {
     ],
     layerShown(){
         if(player.r.unlocked) return true
-        return hasUpgrade("s", 15)
+        if(hasUpgrade("s", 15)){
+            player.r.unlocked = true
+            return true
+        }
     },
     doReset(resettingLayer) {
         return
     },
+    automation_science: {
+        costScalingExponent() {
+            let exp = new Decimal(1.5)
+            if (hasUpgrade("a", 13)) exp = exp.sub(0.1)
+            return exp
+        }
+    },
     buyables: {
         11: {
             title: "Automation Science",
-            unlocked() {return hasUpgrade("s",15)},
+            unlocked() {return true},
             tooltip() {
-                return "Cost Formula:<br>500 * 5^x * x^(1.5^x)<br>Effect Formula:<br>0.5*[Amount]"
+                return `Cost Formula:<br>500 * 5^x * x^(${tmp.r.automation_science.costScalingExponent}^x)<br>Effect Formula:<br>0.5*[Amount]`
             },
             style() {
                 const style = {"background-color": null}
@@ -34,7 +44,7 @@ addLayer("r", {
                 return style
             },
             cost(x){
-                return (new Decimal(500)).mul((new Decimal(5)).pow(x)).mul(Decimal.max(x.pow((new Decimal(1.5)).pow(x)), 1))
+                return (new Decimal(500)).mul((new Decimal(5)).pow(x)).mul(Decimal.max(x.pow((tmp.r.automation_science.costScalingExponent).pow(x)), 1))
             },
             canAfford() {return player.s.iron_plates.gte(this.cost()) && player.s.copper_plates.gte(this.cost())},
             display() {return `

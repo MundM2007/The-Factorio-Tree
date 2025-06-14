@@ -5,7 +5,7 @@ addLayer("i", {
     startData() { return {
         unlocked: true,
     }},
-    tooltip: "Info",
+    tooltip: "Info (Spoilers!)",
     color: "#20ff75",
     type: "none",
     row: "side",

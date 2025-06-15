@@ -1,7 +1,7 @@
 addLayer("r", {
     name: "research", 
     symbol: "🧪",
-    position: 0,
+    position: 1,
     startData() { return {
         unlocked: false,
     }},
@@ -23,6 +23,9 @@ addLayer("r", {
     },
     doReset(resettingLayer) {
         return
+    },
+    shouldNotify(){
+        return tmp.r.buyables[11].canAfford
     },
     automation_science: {
         costScalingExponent() {

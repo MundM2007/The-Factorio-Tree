@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.0",
-	name: "Assemblers!",
+	num: "0.2.1",
+	name: "",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
+	let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.2.1</h3><br>
+		- Added a Savebank.<br>
+		- Added a highlight around the research layer if a buyable can be bought.<br>
+		- Assembler Challenges tab is now only shown if AC's are unlocked.<br>
+		- Made sure information and research layers order correctly.<br>
 	<h3>v0.2.0: Assemblers!</h3><br>
 		- Added 1 Layer + 1 Information Layer.<br>
 		- Added 3 Resources.<br>

@@ -13,11 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.1",
+	num: "0.2.2",
 	name: "",
 }
 
 	let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.2.2</h3><br>
+		- added 15 Upgrades.<br>
+		- added 6 Milestone.<br>
+		- added 1 Buyable.<br>
+		- changed some challenge formulas.<br>
+		- added an extra milestone tab to each layer.<br>
+		- Current Endgame: 2.2e38 seconds<br>
 	<h3>v0.2.1</h3><br>
 		- Added a Savebank.<br>
 		- Added a highlight around the research layer if a buyable can be bought.<br>
@@ -71,10 +78,11 @@ function getPointGenAdd() {
 	if(inChallenge("a", 13)) return tmp.a.challenges[13].challengeNerf
 	let add = new Decimal(1.7)
 
-	if(hasUpgrade("s",12)) add = add.add(1.3)
-	if(hasUpgrade("s",22)) add = add.add(upgradeEffect("s", 22))
-	if(hasUpgrade("a",11)) add = add.add(1.3)
-	if(hasUpgrade("a",15)) add = add.add(0.35)
+	if(hasUpgrade("s", 12)) add = add.add(1.3)
+	if(hasUpgrade("s", 22)) add = add.add(upgradeEffect("s", 22))
+	if(hasUpgrade("a", 11)) add = add.add(1.3)
+	if(hasUpgrade("a", 15)) add = add.add(0.35)
+	if(hasUpgrade("a", 44)) add = add.add(5)
 	
 	return add
 }
@@ -86,12 +94,14 @@ function getPointGenExp() {
 
 	//add
 	exp = exp.add(buyableEffect("r", 11))
-	if(hasUpgrade("s",25)) exp = exp.add(0.182)
-	if(hasUpgrade("s",32)) exp = exp.add(upgradeEffect("s", 32))
-	if(hasUpgrade("a",15)) exp = exp.add(0.35)
+	if(hasUpgrade("s", 25)) exp = exp.add(0.182)
+	if(hasUpgrade("s", 32)) exp = exp.add(upgradeEffect("s", 32))
+	if(hasUpgrade("a", 15)) exp = exp.add(0.35)
+	if(hasUpgrade("a", 25)) exp = exp.add(0.3)
+	if(hasUpgrade("a", 42)) exp = exp.add(upgradeEffect("a", 42))
 	
 	//mul
-	if(hasUpgrade("s",31)) exp = exp.mul(1.25)
+	if(hasUpgrade("s", 31)) exp = exp.mul(1.25)
 	
 	return exp
 }
@@ -100,7 +110,8 @@ function getPointGenExp() {
 function getPointGenRoot() {
 	let root = new Decimal(1/2)
 
-	if(hasUpgrade("s",34)) root = root.add(0.22)
+	if(hasUpgrade("s", 34)) root = root.add(0.22)
+	if(hasUpgrade("a", 43)) root = root.add(0.28)
 
 	return root
 }
@@ -108,6 +119,9 @@ function getPointGenRoot() {
 
 function getPointGenLog() {
 	let log = new Decimal(10)
+
+	if(hasMilestone("s", 5)) log = log.sub(milestoneEffect("s", 5))
+
 	return log
 }
 
@@ -116,12 +130,20 @@ function getPointGenMul() {
 	if(inChallenge("a", 11)) return tmp.a.challenges[11].challengeNerf
 	let mul = new Decimal(1)
 
-	if(hasUpgrade("s",11)) mul = mul.mul(2)
-	if(hasMilestone("s",1)) mul = mul.mul(1.165)
-	if(hasUpgrade("s",13)) mul = mul.mul(upgradeEffect("s", 13))
-	if(hasUpgrade("s",23)) mul = mul.mul(upgradeEffect("s", 23))
-	if(hasMilestone("s",4)) mul = mul.mul(1.456)
-	if(hasUpgrade("a",15)) mul = mul.mul(5)
+	if(hasUpgrade("s", 11)) mul = mul.mul(2)
+	if(hasMilestone("s", 1)) mul = mul.mul(1.165)
+	if(hasUpgrade("s", 13)) mul = mul.mul(upgradeEffect("s", 13))
+	if(hasUpgrade("s", 23)) mul = mul.mul(upgradeEffect("s", 23))
+	if(hasMilestone("s", 4)) mul = mul.mul(1.456)
+	if(hasUpgrade("a", 15)) mul = mul.mul(5)
+	mul = mul.mul(buyableEffect("r", 12))
+	if(hasUpgrade("a", 31)) mul = mul.mul(upgradeEffect("a", 31))
+	if(hasMilestone("a", 5)) mul = mul.mul(1.5)
+	if(hasUpgrade("a", 41)) mul = mul.mul(1.5)
+	if(hasMilestone("s", 6)) mul = mul.mul(1.5)
+
+
+	if(hasUpgrade("a", 22)) mul = mul.pow(1.05)
 	
 	return mul
 }
@@ -157,7 +179,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1.14e17"))
+	return player.points.gte(new Decimal("2.2e38"))
 }
 
 

@@ -42,23 +42,31 @@ addLayer("s", {
     hotkeys: [
         {key: "s", description: "S: Reset for smelters", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    tabFormat: [
-        "main-display",
-        "prestige-button",
-        "resource-display",
-        "milestones",
-        ["display-text", 
-            () => {
-                if (!hasMilestone("s", 0)) return ""
-                return `You have <h2 style="color: #707070; text-shadow: 0px 0px 10px #707070">${format(player.s.iron_plates)}</h2> iron plates<br>
-                Your smelters are generating ${format(tmp.s.iron_plates.getGain)} iron plates per second <br>Production ${getStandardFormula("s", "iron_plates")}<br>
-                You have <h2 style="color: #ffa982; text-shadow: 0px 0px 10px #ffa982">${format(player.s.copper_plates)}</h2> copper plates<br>
-                Your smelters are generating ${format(tmp.s.copper_plates.getGain)} copper plates per second <br>Production ${getStandardFormula("s", "copper_plates")}`
-            }
-        ],
-        "blank",
-        "upgrades"
-    ],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "resource-display",
+                ["display-text", 
+                    () => {
+                        if (!hasMilestone("s", 0)) return ""
+                        return `You have <h2 style="color: #707070; text-shadow: 0px 0px 10px #707070">${format(player.s.iron_plates)}</h2> iron plates<br>
+                        Your smelters are generating ${format(tmp.s.iron_plates.getGain)} iron plates per second <br>Production ${getStandardFormula("s", "iron_plates")}<br>
+                        You have <h2 style="color: #ffa982; text-shadow: 0px 0px 10px #ffa982">${format(player.s.copper_plates)}</h2> copper plates<br>
+                        Your smelters are generating ${format(tmp.s.copper_plates.getGain)} copper plates per second <br>Production ${getStandardFormula("s", "copper_plates")}`
+                    }
+                ],
+                "blank",
+                "upgrades"
+            ]
+        },
+        "Milestones": {
+            content: [
+                "milestones"
+            ]
+        }
+    },
     layerShown(){return true},
     update(diff) {
         player.s.iron_plates = player.s.iron_plates.add(tmp.s.iron_plates.getGain.mul(diff))
@@ -66,6 +74,9 @@ addLayer("s", {
     },
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, [])
+    },
+    resetsNothing(){
+        return hasMilestone("a", 4)
     },
     automate(){
         let autoUpgrade = []
@@ -87,6 +98,7 @@ addLayer("s", {
         getExp(){
             let exp = new Decimal(2)
             if (hasUpgrade("s", 24)) exp = exp.add(1)
+            if (hasUpgrade("a", 32)) exp = exp.add(3)
 
             if (hasUpgrade("a", 14)) exp = exp.mul(1.5)
             return exp
@@ -99,6 +111,8 @@ addLayer("s", {
             mul = mul.mul(challengeEffect("a", 11))
             if (hasUpgrade("s", 35)) mul = mul.mul(5)
             if (hasMilestone("a", 2)) mul = mul.mul(50)
+            if (hasUpgrade("a", 21)) mul = mul.mul(tmp.a.upgrades[21].effectToIron)
+            if (hasUpgrade("a", 34)) mul = mul.mul(100)
             return mul
         },
         getGain(){
@@ -111,6 +125,7 @@ addLayer("s", {
         getExp(){
             let exp = new Decimal(1)
             if (hasUpgrade("s", 24)) exp = exp.add(1)
+            if (hasUpgrade("a", 32)) exp = exp.add(2)
 
             if (hasUpgrade("a", 14)) exp = exp.mul(1.5)
             return exp
@@ -124,6 +139,9 @@ addLayer("s", {
             mul = mul.mul(challengeEffect("a", 11))
             if (hasUpgrade("s", 35)) mul = mul.mul(5)
             if (hasMilestone("a", 2)) mul = mul.mul(50)
+            if (hasUpgrade("a", 21)) mul = mul.mul(tmp.a.upgrades[21].effectToCopper)
+            if (hasMilestone("a", 4)) mul = mul.mul(4)
+            if (hasUpgrade("a", 34)) mul = mul.mul(100)
             return mul
         },
         getGain(){
@@ -161,6 +179,18 @@ addLayer("s", {
             effectDescription: "Seconds gain is multiplied by 1.456.",
             unlocked() {return hasMilestone("s", 3)},
             done() {return player.s.points.gte(27)},
+        },
+        5: {
+            requirementDescription: "154 smelters",
+            effectDescription(){return "Automation Science's effect is increased by 0.04353 per buyable bought."},
+            unlocked() {return hasMilestone("s", 4) && hasMilestone("a", 2)},
+            done() {return player.s.points.gte(154)}
+        },
+        6: {
+            requirementDescription: "380 smelters",
+            effectDescription(){return "Multiply belts and inserters production by 10 and seconds gain by 1.5."},
+            unlocked() {return hasMilestone("s", 5) && hasMilestone("a", 5)},
+            done() {return player.s.points.gte(380)}
         }
     },
     upgrades: {
@@ -191,7 +221,7 @@ addLayer("s", {
                 return "Formula: log2([smelters])<br>^(1.5)+0.025"
             },
             effect() {
-                return Decimal.max(player.s.points.log(2).pow(3/2).add(0.025), 1)
+                return Decimal.max(1, player.s.points.log(2).pow(3/2).add(0.025))
             },
             effectDisplay() {
                 return "x" + format(this.effect())
@@ -227,13 +257,13 @@ addLayer("s", {
                 return "Formula:<br>log2([Resource])"
             },
             effectToIron() {
-                return Decimal.max(player.s.copper_plates.log2(), 1)
+                return Decimal.max(1, player.s.copper_plates.log2())
             },
             effectToCopper() {
-                return Decimal.max(player.s.iron_plates.log2(), 1)
+                return Decimal.max(1, player.s.iron_plates.log2())
             },
             effectDisplay() {
-                return "<br>" + format(this.effectToIron()) + "x (Iron) and <br>" + format(this.effectToCopper()) + "x (Copper)"
+                return "<br>x" + format(this.effectToIron()) + "(Iron) and <br>x" + format(this.effectToCopper()) + "(Copper)"
             },
             currencyDisplayName: "iron plates",
             currencyInternalName: "iron_plates",
@@ -266,7 +296,7 @@ addLayer("s", {
                 return "Formula:<br>[seconds]^(0.1)"
             },
             effect() {
-                return Decimal.max(player.points.pow(0.1), 1)
+                return Decimal.max(1, player.points.pow(0.1))
             },
             effectDisplay() {
                 return "x" + format(this.effect())
@@ -329,7 +359,7 @@ addLayer("s", {
                 return "Formula:<br>log4([Smelters])<br>^(0.5)"
             },
             effect() {
-                return Decimal.max(player.s.points.log(4).pow(0.5), 1)
+                return Decimal.max(1, player.s.points.log(4).pow(0.5))
             },
             effectDisplay() {
                 return "x" + format(this.effect())
